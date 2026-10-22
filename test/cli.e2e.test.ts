@@ -26,7 +26,7 @@ describe('cli (end to end)', { timeout: 15_000 }, () => {
 
   it('keeps warnings on stderr and the note on stdout, and exits 2, when lines are skipped', () => {
     expect(runCli(['examples/with-errors.txt'])).toEqual({
-      stdout: 'Globex: No current relationship.\n\nNote: 1 input line skipped; report may be incomplete.\n',
+      stdout: 'Globex: No current relationship\n\nNote: 1 input line skipped; report may be incomplete.\n',
       stderr: "warning: line 2: unknown command 'Investor'\n",
       exitCode: 2,
     });

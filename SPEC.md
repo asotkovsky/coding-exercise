@@ -16,12 +16,12 @@ One command per line. Words are separated by spaces and contain only the letters
 ## Output
 Every declared company, one per line sorted alphabetically. 
 - `<CompanyName>: <PartnerName> (<RelationshipStrength>)` 
-- `<CompanyName>: No current relationship.`
+- `<CompanyName>: No current relationship`
 
 __Rules__:
 
 - Relationship strength = total number of Contacts between a Partner and all Employees of the Company. Every contact type counts as 1.
-- A Company with no Contacts (including one with no Employees) prints `No current relationship.`
+- A Company with no Contacts (including one with no Employees) prints `No current relationship`
 - If several Partners tie for the highest strength, all of them are listed, alphabetically, comma-separated: `Globex: Chris, Molly (2)`
 
 ## Design decisions not outlined in assignment requirements

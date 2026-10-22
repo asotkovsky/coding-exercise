@@ -17,7 +17,7 @@ export function formatSkippedNote(skippedLines: number): string {
 function formatCompanyLine(company: CompanyContacts): string {
   const strongest = findStrongest(company.partnerCounts);
   if (strongest === undefined) {
-    return `${company.name}: No current relationship.`;
+    return `${company.name}: No current relationship`;
   }
   return `${company.name}: ${strongest.names.join(', ')} (${strongest.strength})`;
 }

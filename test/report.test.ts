@@ -27,7 +27,7 @@ describe('formatReport', () => {
     ];
 
     expect(formatReport(companies)).toEqual([
-      'ACME: No current relationship.',
+      'ACME: No current relationship',
       'Globex: Chris (2)',
       'Hooli: Molly (1)',
     ]);
@@ -46,9 +46,9 @@ describe('formatReport', () => {
       ];
 
       expect(formatReport(companies)).toEqual([
-        'APPLE: No current relationship.',
-        'banana: No current relationship.',
-        'Cherry: No current relationship.',
+        'APPLE: No current relationship',
+        'banana: No current relationship',
+        'Cherry: No current relationship',
       ]);
     });
 

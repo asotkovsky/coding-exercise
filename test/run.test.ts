@@ -23,7 +23,7 @@ describe('run', () => {
   describe('valid input', () => {
     it('produces the assignment example report with no warnings', () => {
       expect(run(EXAMPLE)).toEqual({
-        stdout: ['ACME: No current relationship.', 'Globex: Chris (2)', 'Hooli: Molly (1)'],
+        stdout: ['ACME: No current relationship', 'Globex: Chris (2)', 'Hooli: Molly (1)'],
         stderr: [],
         exitCode: 0,
       });
@@ -64,7 +64,7 @@ describe('run', () => {
       const result = run(lines('Company Globex', 'Investor Bob'));
 
       expect(result.stdout).toEqual([
-        'Globex: No current relationship.',
+        'Globex: No current relationship',
         '',
         'Note: 1 input line skipped; report may be incomplete.',
       ]);

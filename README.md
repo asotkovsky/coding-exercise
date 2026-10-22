@@ -6,7 +6,7 @@ Drive Capital Partner has the strongest relationship with each Company.
 Example:
 ```
 $ npm run -s analyze -- examples/input.txt
-ACME: No current relationship.
+ACME: No current relationship
 Globex: Chris (2)
 Hooli: Molly (1)
 ```
@@ -64,6 +64,20 @@ The code is a pipeline of small modules, each with one job:
    Partner for each, and formats the output lines.
 4. `cli.ts` prints the result and sets the exit code.
 
+### Why it's split this way
+
+- **Testability.** Each file can be tested on its own. The parser is tested with
+  single lines, the network with commands, and the report with plain data, so a
+  failing test points straight at the module with the bug. Because `run.ts` is
+  pure function (string in, results out), even line numbers and exit codes can be tested without starting a process.
+- **Readability.** Each file does one thing and is short enough to read in one
+  sitting. To change the output format you only open `report.ts`; to add a
+  command you start in `parser.ts`.
+- **Clear boundaries.** The parser checks whether a line is valid on its own
+  (syntax); the network checks whether it makes sense given earlier lines
+  (undeclared names, conflicts). Only `cli.ts` touches files and the console,
+  so the rest of the code doesn't care where input comes from.
+  
 ## Interpretations of the assignment
 
 Full details, including every error case, are in [SPEC.md](SPEC.md). In short:
@@ -94,4 +108,12 @@ Full details, including every error case, are in [SPEC.md](SPEC.md). In short:
 - Weight contact types differently (e.g. coffee > email), or factor in recency.
 
 ## How I used LLM tools
+I used Claude Code (in VS Code) as a pair programmer for this project.
 
+**What I used it for:** brainstorming the ambiguities and edge cases in the
+assignment, scaffolding the project, and writing the implementation and tests in
+small steps that I reviewed in detail and tweaked as we went. I also used it to challenge my design choices and review my spec for gaps.
+
+**What I did myself:** the major design decisions. I settled the open questions
+in [SPEC.md](SPEC.md) before any code was written (error handling, case sensitivity, etc.). I chose the module structure, reviewed every step, and pushed back or simplified
+where I disagreed.
