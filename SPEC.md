@@ -53,6 +53,7 @@ While well-formed input can be assumed for this assignment, it won't hurt to acc
 - Employees and Partners can share a name
 - Whitespace in input is tolerated (leading/trailing spaces, multiple spaces between words, \r\n line endings.) 
 - Input with no companies logs a notice
+- Some real names like José, Mary-Jane and O'Brien will fail to parse but this is in line with the requirements that only letter characters are valid
 
 ## Out of scope
 - Weighting contact types differently (e.g. coffee > email).
