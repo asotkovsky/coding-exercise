@@ -85,7 +85,7 @@ Full details, including every error case, are in [SPEC.md](SPEC.md). In short:
 - **Ties.** All tied Partners are listed alphabetically: `Globex: Chris, Molly (2)`.
 - **Ordering.** Lines are processed in order. Anything referenced must already be
   declared, so a Contact for a Partner declared later is skipped with a warning.
-- **Case.** Names, commands, and contact types are matched case-insensitively. This is to accomodate for human error in hand-entered data. Output uses the spelling from the first declaration if there were multiple spellings referenced in the input file.
+- **Case.** Names, commands, and contact types are matched case-insensitively. This is to accommodate for human error in hand-entered data. Output uses the spelling from the first declaration if there were multiple spellings referenced in the input file.
 - **Bad input.** The assignment allows assuming well-formed input, but invalid lines
   are skipped with a warning (with line number) rather than crashing or silently
   dropping data.
@@ -105,6 +105,11 @@ Full details, including every error case, are in [SPEC.md](SPEC.md). In short:
 ## What I'd do next
 
 - Treat an Employee re-declared at a different company as a job change instead of an error.
+*OR* 
+accept Contacts that appear before the Partner or Employee they mention, by
+  applying all declarations before any Contacts. I'd pick based on
+  whether input order is meaningful in the real data.
+
 - Weight contact types differently (e.g. coffee > email), or factor in recency.
 
 ## How I used LLM tools

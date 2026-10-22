@@ -27,7 +27,7 @@ function findStrongest(partnerCounts: PartnerCount[]): Strongest | undefined {
   if (partnerCounts.length === 0) {
     return undefined;
   }
-  const strength = Math.max(...partnerCounts.map((partner) => partner.count));
+  const strength = partnerCounts.reduce((max, partner) => Math.max(max, partner.count), 0);
   const names = partnerCounts
     .filter((partner) => partner.count === strength)
     .map((partner) => partner.name)
