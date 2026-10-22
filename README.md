@@ -120,5 +120,5 @@ assignment, scaffolding the project, and writing the implementation and tests in
 small steps that I reviewed in detail and tweaked as we went. I also used it to challenge my design choices and review my spec for gaps.
 
 **What I did myself:** the major design decisions. I settled the open questions
-in [SPEC.md](SPEC.md) before any code was written (error handling, case sensitivity, etc.). I chose the module structure, reviewed every step, and pushed back or simplified
+in [SPEC.md](SPEC.md) before any code was written (error handling, case sensitivity, etc.). I chose the module structure, reviewed every line, and pushed back or simplified
 where I disagreed.
