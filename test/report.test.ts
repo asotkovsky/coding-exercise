@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import type { CompanyContacts } from '../src/network.js';
-import { formatReport } from '../src/report.js';
+import { formatReport, formatSkippedNote } from '../src/report.js';
+
+describe('formatSkippedNote', () => {
+  it('uses the singular for one line', () => {
+    expect(formatSkippedNote(1)).toBe('Note: 1 input line skipped; report may be incomplete.');
+  });
+
+  it('uses the plural for several lines', () => {
+    expect(formatSkippedNote(3)).toBe('Note: 3 input lines skipped; report may be incomplete.');
+  });
+});
 
 describe('formatReport', () => {
   it('formats the assignment example', () => {

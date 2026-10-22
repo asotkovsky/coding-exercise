@@ -9,6 +9,11 @@ export function formatReport(companies: CompanyContacts[]): string[] {
   return [...companies].sort((a, b) => compareNames(a.name, b.name)).map(formatCompanyLine);
 }
 
+export function formatSkippedNote(skippedLines: number): string {
+  const noun = skippedLines === 1 ? 'line' : 'lines';
+  return `Note: ${skippedLines} input ${noun} skipped; report may be incomplete.`;
+}
+
 function formatCompanyLine(company: CompanyContacts): string {
   const strongest = findStrongest(company.partnerCounts);
   if (strongest === undefined) {
