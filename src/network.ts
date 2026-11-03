@@ -53,7 +53,7 @@ export class Network {
       case 'employee':
         return this.addEmployee(command.name, command.company);
       case 'contact':
-        return this.addContact(command.employee, command.partner, command.contactType);
+        return this.addContact(command.employee, command.partners, command.contactType);
     }
   }
 
@@ -95,14 +95,16 @@ export class Network {
     );
   }
 
-  private addContact(employeeName: string, partnerName: string, contactType: ContactType): ApplyResult {
+  // Every partner at the contact gets the full weight. The contact is all-or-nothing: if any
+  // partner is undeclared, nobody is credited. A partner listed twice is credited once.
+  private addContact(employeeName: string, partnerNames: string[], contactType: ContactType): ApplyResult {
     const employee = this.employees.get(toKey(employeeName));
     if (employee === undefined) {
       return error(`unknown employee '${employeeName}'`);
     }
-    const partnerKey = toKey(partnerName);
-    if (!this.partners.has(partnerKey)) {
-      return error(`unknown partner '${partnerName}'`);
+    const unknownPartner = partnerNames.find((name) => !this.partners.has(toKey(name)));
+    if (unknownPartner !== undefined) {
+      return error(`unknown partner '${unknownPartner}'`);
     }
 
     let strengths = this.strengths.get(employee.companyKey);
@@ -110,7 +112,10 @@ export class Network {
       strengths = new Map();
       this.strengths.set(employee.companyKey, strengths);
     }
-    strengths.set(partnerKey, (strengths.get(partnerKey) ?? 0) + contactWeight[contactType]);
+    const weight = contactWeight[contactType];
+    for (const partnerKey of new Set(partnerNames.map(toKey))) {
+      strengths.set(partnerKey, (strengths.get(partnerKey) ?? 0) + weight);
+    }
     return OK;
   }
 }

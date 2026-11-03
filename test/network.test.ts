@@ -9,10 +9,14 @@ const employee = (name: string, companyName: string): Command => ({
   name,
   company: companyName,
 });
-const contact = (employeeName: string, partnerName: string, contactType: ContactType = 'email'): Command => ({
+const contact = (
+  employeeName: string,
+  partnerNames: string | string[],
+  contactType: ContactType = 'email',
+): Command => ({
   kind: 'contact',
   employee: employeeName,
-  partner: partnerName,
+  partners: typeof partnerNames === 'string' ? [partnerNames] : partnerNames,
   contactType,
 });
 
@@ -198,6 +202,47 @@ describe('Network', () => {
           ],
         },
       ]);
+    });
+
+    it('gives every partner at a contact the full weight', () => {
+      network.apply(partner('Molly'));
+      network.apply(partner('Rezzan'));
+      network.apply(company('Globex'));
+      network.apply(employee('Laurie', 'Globex'));
+      network.apply(contact('Laurie', ['Molly', 'Rezzan'], 'coffee'));
+
+      expect(network.listCompanies()).toEqual([
+        {
+          name: 'Globex',
+          partnerStrengths: [
+            { name: 'Molly', strength: 3 },
+            { name: 'Rezzan', strength: 3 },
+          ],
+        },
+      ]);
+    });
+
+    it('credits a partner listed twice in one contact only once', () => {
+      network.apply(partner('Molly'));
+      network.apply(company('Globex'));
+      network.apply(employee('Laurie', 'Globex'));
+      network.apply(contact('Laurie', ['Molly', 'molly'], 'call'));
+
+      expect(network.listCompanies()).toEqual([
+        { name: 'Globex', partnerStrengths: [{ name: 'Molly', strength: 2 }] },
+      ]);
+    });
+
+    it('credits nobody when any partner at a contact is undeclared', () => {
+      network.apply(partner('Molly'));
+      network.apply(company('Globex'));
+      network.apply(employee('Laurie', 'Globex'));
+
+      expect(network.apply(contact('Laurie', ['Molly', 'Rezzan']))).toEqual({
+        ok: false,
+        message: "unknown partner 'Rezzan'",
+      });
+      expect(network.listCompanies()).toEqual([{ name: 'Globex', partnerStrengths: [] }]);
     });
 
     it('does not count rejected contacts', () => {

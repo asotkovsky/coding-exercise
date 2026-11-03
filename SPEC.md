@@ -11,7 +11,7 @@ One command per line. Words are separated by spaces and contain only the letters
 | `Partner <Name>` | Declares a Partner (an employee of Drive Capital). |
 | `Company <Name>` | Declares a Company (never Drive Capital). |
 | `Employee <Name> <CompanyName>` | Declares an Employee of a previously declared Company. Employee names are globally unique. |
-| `Contact <EmployeeName> <PartnerName> <email\|call\|coffee\|pitch>` | Records one interaction between a Partner and an Employee. |
+| `Contact <EmployeeName> <PartnerName> [<PartnerName>...] <email\|call\|coffee\|pitch>` | Records one interaction between one Employee and one or more Partners, separated by spaces (e.g. `Contact Abdi Molly Rezzan email`). |
 
 ## Output
 Every declared company, one per line sorted alphabetically. 
@@ -28,6 +28,7 @@ __Rules__:
   | `call` | 2 |
   | `coffee` | 3 |
   | `pitch` | 5 |
+- Every Partner at a Contact gets the full weight. If Molly and Rezzan have coffee with an Employee, each gets 3 added to their strength with that Employee's Company.
 - A Company with no Contacts (including one with no Employees) prints `No current relationship`
 - If several Partners tie for the highest strength, all of them are listed, alphabetically, comma-separated: `Globex: Chris, Molly (2)`
 
@@ -52,6 +53,8 @@ While well-formed input can be assumed for this assignment, it won't hurt to acc
 | Contact type not `email`/`call`/`coffee`/`pitch` | Warn, skip |
 | Employee references undeclared Company | Warn, skip |
 | Contact references undeclared Employee or Partner | Warn, skip |
+| Contact lists several Partners and any of them is undeclared | Warn, skip the whole Contact (no Partner is credited) |
+| Same Partner listed more than once in one Contact | Credited once, no warning |
 | Exact repeat of an earlier declaration | Ignored, no warning |
 | Conflicting re-declaration (e.g. Employee Sarah at Hooli and Employee Sarah at ACME) | Warn, skip (first declaration wins) |
 | Blank line | Ignored, no warning |
