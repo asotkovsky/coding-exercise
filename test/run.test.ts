@@ -23,7 +23,7 @@ describe('run', () => {
   describe('valid input', () => {
     it('produces the assignment example report with no warnings', () => {
       expect(run(EXAMPLE)).toEqual({
-        stdout: ['ACME: No current relationship', 'Globex: Chris (2)', 'Hooli: Molly (1)'],
+        stdout: ['ACME: No current relationship', 'Globex: Chris (4)', 'Hooli: Molly (1)'],
         stderr: [],
         exitCode: 0,
       });
@@ -55,7 +55,7 @@ describe('run', () => {
       const result = run(lines('Partner Chris', 'Company Globex', 'Contact Bob Chris text', 'Contact Bob Chris email'));
 
       expect(result.stderr).toEqual([
-        "warning: line 3: unknown contact type 'text' (expected email, call, or coffee)",
+        "warning: line 3: unknown contact type 'text' (expected email, call, coffee, pitch)",
         "warning: line 4: unknown employee 'Bob'",
       ]);
     });
@@ -78,7 +78,7 @@ describe('run', () => {
 
     it('still counts contacts on valid lines around skipped ones', () => {
       const result = run(lines(EXAMPLE, 'Contact Laurie Chris text', 'Contact Abdi Molly call'));
-      expect(result.stdout).toContain('Hooli: Molly (2)');
+      expect(result.stdout).toContain('Hooli: Molly (3)'); // email 1 + call 2
     });
   });
 

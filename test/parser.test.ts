@@ -33,12 +33,21 @@ describe('parseLine', () => {
       });
     });
 
-    it.each(['email', 'call', 'coffee'])('parses Contact with type %s', (type) => {
+    it.each(['email', 'call', 'coffee', 'pitch'])('parses Contact with type %s', (type) => {
       expect(parseLine(`Contact Laurie Chris ${type}`)).toEqual({
         kind: 'contact',
         employee: 'Laurie',
-        partner: 'Chris',
+        partners: ['Chris'],
         contactType: type,
+      });
+    });
+
+    it('parses Contact with several partners', () => {
+      expect(parseLine('Contact Abdi Molly Rezzan email')).toEqual({
+        kind: 'contact',
+        employee: 'Abdi',
+        partners: ['Molly', 'Rezzan'],
+        contactType: 'email',
       });
     });
   });
@@ -80,10 +89,17 @@ describe('parseLine', () => {
       expect(parseLine('Investor Bob')).toEqual({ kind: 'error', message: "unknown command 'Investor'" });
     });
 
+    it('treats the last word as the contact type when there are extra words', () => {
+      expect(parseLine('Contact Laurie Chris email today')).toEqual({
+        kind: 'error',
+        message: "unknown contact type 'today' (expected email, call, coffee, pitch)",
+      });
+    });
+
     it('rejects an unknown contact type', () => {
       expect(parseLine('Contact Laurie Chris text')).toEqual({
         kind: 'error',
-        message: "unknown contact type 'text' (expected email, call, or coffee)",
+        message: "unknown contact type 'text' (expected email, call, coffee, pitch)",
       });
     });
 
@@ -94,8 +110,9 @@ describe('parseLine', () => {
       ['Company Globex Inc', "expected 'Company <Name>'"],
       ['Employee Laurie', "expected 'Employee <Name> <CompanyName>'"],
       ['Employee Laurie Globex Extra', "expected 'Employee <Name> <CompanyName>'"],
-      ['Contact Laurie Chris', "expected 'Contact <EmployeeName> <PartnerName> <email|call|coffee>'"],
-      ['Contact Laurie Chris email today', "expected 'Contact <EmployeeName> <PartnerName> <email|call|coffee>'"],
+      ['Contact', "expected 'Contact <EmployeeName> <PartnerName> [<PartnerName>...] <email|call|coffee|pitch>'"],
+      ['Contact Laurie', "expected 'Contact <EmployeeName> <PartnerName> [<PartnerName>...] <email|call|coffee|pitch>'"],
+      ['Contact Laurie Chris', "expected 'Contact <EmployeeName> <PartnerName> [<PartnerName>...] <email|call|coffee|pitch>'"],
     ])('rejects wrong number of words: %s', (line, message) => {
       expect(parseLine(line)).toEqual({ kind: 'error', message });
     });

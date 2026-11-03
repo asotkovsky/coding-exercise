@@ -1,11 +1,11 @@
-export const CONTACT_TYPES = ['email', 'call', 'coffee'] as const;
+export const CONTACT_TYPES = ['email', 'call', 'coffee', 'pitch'] as const;
 export type ContactType = (typeof CONTACT_TYPES)[number];
 
 export type Command =
   | { kind: 'partner'; name: string }
   | { kind: 'company'; name: string }
   | { kind: 'employee'; name: string; company: string }
-  | { kind: 'contact'; employee: string; partner: string; contactType: ContactType };
+  | { kind: 'contact'; employee: string; partners: string[]; contactType: ContactType };
 
 export type ParseResult =
   | Command
@@ -13,6 +13,7 @@ export type ParseResult =
   | { kind: 'error'; message: string };
 
 const WORD = /^[A-Za-z]+$/;
+const CONTACT_USAGE = 'Contact <EmployeeName> <PartnerName> [<PartnerName>...] <email|call|coffee|pitch>';
 
 export function parseLine(line: string): ParseResult {
   const [keyword = '', ...args] = line.trim().split(/\s+/);
@@ -52,15 +53,18 @@ export function parseLine(line: string): ParseResult {
     }
 
     case 'contact': {
-      const [employee, partner, type, ...extra] = args;
-      if (employee === undefined || partner === undefined || type === undefined || extra.length > 0) {
-        return usageError('Contact <EmployeeName> <PartnerName> <email|call|coffee>');
+      // One employee, then one or more partners, then the contact type as the last word.
+      const [employee, ...rest] = args;
+      const type = rest.pop();
+      const partners = rest;
+      if (employee === undefined || type === undefined || partners.length === 0) {
+        return usageError(CONTACT_USAGE);
       }
       const contactType = type.toLowerCase();
       if (!isContactType(contactType)) {
-        return { kind: 'error', message: `unknown contact type '${type}' (expected email, call, or coffee)` };
+        return { kind: 'error', message: `unknown contact type '${type}' (expected email, call, coffee, pitch)` };
       }
-      return { kind: 'contact', employee, partner, contactType };
+      return { kind: 'contact', employee, partners, contactType };
     }
 
     default:

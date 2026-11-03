@@ -17,7 +17,7 @@ const readFixture = (path: string) => readFileSync(path, 'utf8').replaceAll('\r\
 // Each test starts a Node process, which is much slower than a unit test.
 describe('cli (end to end)', { timeout: 15_000 }, () => {
   it('prints the expected report for the example input file', () => {
-    expect(runCli(['examples/input.txt'])).toEqual({
+    expect(runCli(['examples/input-test.txt'])).toEqual({
       stdout: readFixture('examples/expected.txt'),
       stderr: '',
       exitCode: 0,
