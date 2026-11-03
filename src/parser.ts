@@ -1,4 +1,4 @@
-export const CONTACT_TYPES = ['email', 'call', 'coffee'] as const;
+export const CONTACT_TYPES = ['email', 'call', 'coffee', 'pitch'] as const;
 export type ContactType = (typeof CONTACT_TYPES)[number];
 
 export type Command =
@@ -54,11 +54,11 @@ export function parseLine(line: string): ParseResult {
     case 'contact': {
       const [employee, partner, type, ...extra] = args;
       if (employee === undefined || partner === undefined || type === undefined || extra.length > 0) {
-        return usageError('Contact <EmployeeName> <PartnerName> <email|call|coffee>');
+        return usageError('Contact <EmployeeName> <PartnerName> <email|call|coffee|pitch>');
       }
       const contactType = type.toLowerCase();
       if (!isContactType(contactType)) {
-        return { kind: 'error', message: `unknown contact type '${type}' (expected email, call, or coffee)` };
+        return { kind: 'error', message: `unknown contact type '${type}' (expected email, call, coffee, pitch)` };
       }
       return { kind: 'contact', employee, partner, contactType };
     }

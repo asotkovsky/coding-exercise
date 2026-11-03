@@ -1,4 +1,4 @@
-import type { CompanyContacts, PartnerCount } from './network.js';
+import type { CompanyContacts, PartnerStrength } from './network.js';
 
 interface Strongest {
   names: string[];
@@ -15,21 +15,21 @@ export function formatSkippedNote(skippedLines: number): string {
 }
 
 function formatCompanyLine(company: CompanyContacts): string {
-  const strongest = findStrongest(company.partnerCounts);
+  const strongest = findStrongest(company.partnerStrengths);
   if (strongest === undefined) {
     return `${company.name}: No current relationship`;
   }
   return `${company.name}: ${strongest.names.join(', ')} (${strongest.strength})`;
 }
 
-// All partners tied for the highest count, alphabetically; undefined if there are no contacts.
-function findStrongest(partnerCounts: PartnerCount[]): Strongest | undefined {
-  if (partnerCounts.length === 0) {
+// All partners tied for the highest strength, alphabetically; undefined if there are no contacts.
+function findStrongest(partnerStrengths: PartnerStrength[]): Strongest | undefined {
+  if (partnerStrengths.length === 0) {
     return undefined;
   }
-  const strength = partnerCounts.reduce((max, partner) => Math.max(max, partner.count), 0);
-  const names = partnerCounts
-    .filter((partner) => partner.count === strength)
+  const strength = partnerStrengths.reduce((max, partner) => Math.max(max, partner.strength), 0);
+  const names = partnerStrengths
+    .filter((partner) => partner.strength === strength)
     .map((partner) => partner.name)
     .sort(compareNames);
   return { names, strength };

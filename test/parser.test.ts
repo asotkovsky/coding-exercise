@@ -33,7 +33,7 @@ describe('parseLine', () => {
       });
     });
 
-    it.each(['email', 'call', 'coffee'])('parses Contact with type %s', (type) => {
+    it.each(['email', 'call', 'coffee', 'pitch'])('parses Contact with type %s', (type) => {
       expect(parseLine(`Contact Laurie Chris ${type}`)).toEqual({
         kind: 'contact',
         employee: 'Laurie',
@@ -83,7 +83,7 @@ describe('parseLine', () => {
     it('rejects an unknown contact type', () => {
       expect(parseLine('Contact Laurie Chris text')).toEqual({
         kind: 'error',
-        message: "unknown contact type 'text' (expected email, call, or coffee)",
+        message: "unknown contact type 'text' (expected email, call, coffee, pitch)",
       });
     });
 
@@ -94,8 +94,8 @@ describe('parseLine', () => {
       ['Company Globex Inc', "expected 'Company <Name>'"],
       ['Employee Laurie', "expected 'Employee <Name> <CompanyName>'"],
       ['Employee Laurie Globex Extra', "expected 'Employee <Name> <CompanyName>'"],
-      ['Contact Laurie Chris', "expected 'Contact <EmployeeName> <PartnerName> <email|call|coffee>'"],
-      ['Contact Laurie Chris email today', "expected 'Contact <EmployeeName> <PartnerName> <email|call|coffee>'"],
+      ['Contact Laurie Chris', "expected 'Contact <EmployeeName> <PartnerName> <email|call|coffee|pitch>'"],
+      ['Contact Laurie Chris email today', "expected 'Contact <EmployeeName> <PartnerName> <email|call|coffee|pitch>'"],
     ])('rejects wrong number of words: %s', (line, message) => {
       expect(parseLine(line)).toEqual({ kind: 'error', message });
     });

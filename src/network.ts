@@ -1,15 +1,15 @@
-import type { Command } from './parser.js';
+import type { Command, ContactType } from './parser.js';
 
 export type ApplyResult = { ok: true } | { ok: false; message: string };
 
-export interface PartnerCount {
+export interface PartnerStrength {
   name: string;
-  count: number;
+  strength: number;
 }
 
 export interface CompanyContacts {
   name: string;
-  partnerCounts: PartnerCount[];
+  partnerStrengths: PartnerStrength[];
 }
 
 interface Employee {
@@ -19,23 +19,26 @@ interface Employee {
 
 const OK: ApplyResult = { ok: true };
 
+// How much each contact type adds to a partner's relationship strength with a company.
+const contactWeight: Record<ContactType, number> = { email: 1, call: 2, coffee: 3, pitch: 5 };
+
 export class Network {
   // All maps are keyed by lowercased name; values keep the first-declared spelling for display.
   private readonly partners = new Map<string, string>();
   private readonly companies = new Map<string, string>();
   private readonly employees = new Map<string, Employee>();
-  // companyKey -> partnerKey -> number of contacts
-  private readonly contacts = new Map<string, Map<string, number>>();
+  // companyKey -> partnerKey -> relationship strength (sum of contact weights)
+  private readonly strengths = new Map<string, Map<string, number>>();
 
   // Returns copies in declaration order, so callers can't change the network's state.
   listCompanies(): CompanyContacts[] {
     return [...this.companies].map(([companyKey, name]) => {
-      const counts = this.contacts.get(companyKey) ?? new Map<string, number>();
+      const strengths = this.strengths.get(companyKey) ?? new Map<string, number>();
       return {
         name,
-        partnerCounts: [...counts].map(([partnerKey, count]) => ({
+        partnerStrengths: [...strengths].map(([partnerKey, strength]) => ({
           name: displayName(this.partners, partnerKey),
-          count,
+          strength,
         })),
       };
     });
@@ -50,7 +53,7 @@ export class Network {
       case 'employee':
         return this.addEmployee(command.name, command.company);
       case 'contact':
-        return this.addContact(command.employee, command.partner);
+        return this.addContact(command.employee, command.partner, command.contactType);
     }
   }
 
@@ -92,8 +95,7 @@ export class Network {
     );
   }
 
-  // Every contact type counts the same, so the type isn't needed here.
-  private addContact(employeeName: string, partnerName: string): ApplyResult {
+  private addContact(employeeName: string, partnerName: string, contactType: ContactType): ApplyResult {
     const employee = this.employees.get(toKey(employeeName));
     if (employee === undefined) {
       return error(`unknown employee '${employeeName}'`);
@@ -103,12 +105,12 @@ export class Network {
       return error(`unknown partner '${partnerName}'`);
     }
 
-    let counts = this.contacts.get(employee.companyKey);
-    if (counts === undefined) {
-      counts = new Map();
-      this.contacts.set(employee.companyKey, counts);
+    let strengths = this.strengths.get(employee.companyKey);
+    if (strengths === undefined) {
+      strengths = new Map();
+      this.strengths.set(employee.companyKey, strengths);
     }
-    counts.set(partnerKey, (counts.get(partnerKey) ?? 0) + 1);
+    strengths.set(partnerKey, (strengths.get(partnerKey) ?? 0) + contactWeight[contactType]);
     return OK;
   }
 }

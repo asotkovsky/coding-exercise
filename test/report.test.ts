@@ -17,13 +17,13 @@ describe('formatReport', () => {
     const companies: CompanyContacts[] = [
       {
         name: 'Globex',
-        partnerCounts: [
-          { name: 'Chris', count: 2 },
-          { name: 'Molly', count: 1 },
+        partnerStrengths: [
+          { name: 'Chris', strength: 2 },
+          { name: 'Molly', strength: 1 },
         ],
       },
-      { name: 'ACME', partnerCounts: [] },
-      { name: 'Hooli', partnerCounts: [{ name: 'Molly', count: 1 }] },
+      { name: 'ACME', partnerStrengths: [] },
+      { name: 'Hooli', partnerStrengths: [{ name: 'Molly', strength: 1 }] },
     ];
 
     expect(formatReport(companies)).toEqual([
@@ -40,9 +40,9 @@ describe('formatReport', () => {
   describe('sorting', () => {
     it('sorts companies alphabetically, ignoring case', () => {
       const companies: CompanyContacts[] = [
-        { name: 'banana', partnerCounts: [] },
-        { name: 'Cherry', partnerCounts: [] },
-        { name: 'APPLE', partnerCounts: [] },
+        { name: 'banana', partnerStrengths: [] },
+        { name: 'Cherry', partnerStrengths: [] },
+        { name: 'APPLE', partnerStrengths: [] },
       ];
 
       expect(formatReport(companies)).toEqual([
@@ -54,8 +54,8 @@ describe('formatReport', () => {
 
     it('does not reorder the array it was given', () => {
       const companies: CompanyContacts[] = [
-        { name: 'Hooli', partnerCounts: [] },
-        { name: 'ACME', partnerCounts: [] },
+        { name: 'Hooli', partnerStrengths: [] },
+        { name: 'ACME', partnerStrengths: [] },
       ];
 
       formatReport(companies);
@@ -69,10 +69,10 @@ describe('formatReport', () => {
       const companies: CompanyContacts[] = [
         {
           name: 'Globex',
-          partnerCounts: [
-            { name: 'Molly', count: 1 },
-            { name: 'Rezzan', count: 3 },
-            { name: 'Chris', count: 2 },
+          partnerStrengths: [
+            { name: 'Molly', strength: 1 },
+            { name: 'Rezzan', strength: 3 },
+            { name: 'Chris', strength: 2 },
           ],
         },
       ];
@@ -84,11 +84,11 @@ describe('formatReport', () => {
       const companies: CompanyContacts[] = [
         {
           name: 'Globex',
-          partnerCounts: [
-            { name: 'Molly', count: 2 },
-            { name: 'Rezzan', count: 1 },
-            { name: 'chris', count: 2 },
-            { name: 'Abdi', count: 2 },
+          partnerStrengths: [
+            { name: 'Molly', strength: 2 },
+            { name: 'Rezzan', strength: 1 },
+            { name: 'chris', strength: 2 },
+            { name: 'Abdi', strength: 2 },
           ],
         },
       ];
@@ -96,14 +96,14 @@ describe('formatReport', () => {
       expect(formatReport(companies)).toEqual(['Globex: Abdi, chris, Molly (2)']);
     });
 
-    it('does not list partners tied below the top count', () => {
+    it('does not list partners tied below the top strength', () => {
       const companies: CompanyContacts[] = [
         {
           name: 'Globex',
-          partnerCounts: [
-            { name: 'Chris', count: 2 },
-            { name: 'Molly', count: 1 },
-            { name: 'Rezzan', count: 1 },
+          partnerStrengths: [
+            { name: 'Chris', strength: 2 },
+            { name: 'Molly', strength: 1 },
+            { name: 'Rezzan', strength: 1 },
           ],
         },
       ];

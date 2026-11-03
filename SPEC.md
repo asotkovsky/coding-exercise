@@ -11,7 +11,7 @@ One command per line. Words are separated by spaces and contain only the letters
 | `Partner <Name>` | Declares a Partner (an employee of Drive Capital). |
 | `Company <Name>` | Declares a Company (never Drive Capital). |
 | `Employee <Name> <CompanyName>` | Declares an Employee of a previously declared Company. Employee names are globally unique. |
-| `Contact <EmployeeName> <PartnerName> <email\|call\|coffee>` | Records one interaction between a Partner and an Employee. |
+| `Contact <EmployeeName> <PartnerName> <email\|call\|coffee\|pitch>` | Records one interaction between a Partner and an Employee. |
 
 ## Output
 Every declared company, one per line sorted alphabetically. 
@@ -20,7 +20,14 @@ Every declared company, one per line sorted alphabetically.
 
 __Rules__:
 
-- Relationship strength = total number of Contacts between a Partner and all Employees of the Company. Every contact type counts as 1.
+- Relationship strength = sum of the weights of all Contacts between a Partner and all Employees of the Company. Each contact type has a weight:
+
+  | Contact type | Weight |
+  |---|---|
+  | `email` | 1 |
+  | `call` | 2 |
+  | `coffee` | 3 |
+  | `pitch` | 5 |
 - A Company with no Contacts (including one with no Employees) prints `No current relationship`
 - If several Partners tie for the highest strength, all of them are listed, alphabetically, comma-separated: `Globex: Chris, Molly (2)`
 
@@ -42,7 +49,7 @@ While well-formed input can be assumed for this assignment, it won't hurt to acc
 | Unknown command (e.g. `Investor Bob`) | Warn, skip |
 | Wrong number of words | Warn, skip |
 | Word with non-letter characters | Warn, skip |
-| Contact type not `email`/`call`/`coffee` | Warn, skip |
+| Contact type not `email`/`call`/`coffee`/`pitch` | Warn, skip |
 | Employee references undeclared Company | Warn, skip |
 | Contact references undeclared Employee or Partner | Warn, skip |
 | Exact repeat of an earlier declaration | Ignored, no warning |
@@ -56,7 +63,6 @@ While well-formed input can be assumed for this assignment, it won't hurt to acc
 - Some real names like José, Mary-Jane and O'Brien will fail to parse but this is in line with the requirements that only letter characters are valid
 
 ## Out of scope
-- Weighting contact types differently (e.g. coffee > email).
 - Considering recency of contact
 - Persistence of information between runs
 - Employees changing companies (e.g. Sarah is declared as working for Hooli earlier in the input and then later is declared as working for ACME). For this first iteration this should be treated as a conflicting declaration and the 2nd is skipped.

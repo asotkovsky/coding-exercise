@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Network } from '../src/network.js';
-import type { Command } from '../src/parser.js';
+import type { Command, ContactType } from '../src/parser.js';
 
 const partner = (name: string): Command => ({ kind: 'partner', name });
 const company = (name: string): Command => ({ kind: 'company', name });
@@ -9,11 +9,11 @@ const employee = (name: string, companyName: string): Command => ({
   name,
   company: companyName,
 });
-const contact = (employeeName: string, partnerName: string): Command => ({
+const contact = (employeeName: string, partnerName: string, contactType: ContactType = 'email'): Command => ({
   kind: 'contact',
   employee: employeeName,
   partner: partnerName,
-  contactType: 'email',
+  contactType,
 });
 
 describe('Network', () => {
@@ -143,13 +143,13 @@ describe('Network', () => {
       expect(network.listCompanies()).toEqual([
         {
           name: 'Globex',
-          partnerCounts: [
-            { name: 'Chris', count: 2 },
-            { name: 'Molly', count: 1 },
+          partnerStrengths: [
+            { name: 'Chris', strength: 2 },
+            { name: 'Molly', strength: 1 },
           ],
         },
-        { name: 'ACME', partnerCounts: [] },
-        { name: 'Hooli', partnerCounts: [{ name: 'Molly', count: 1 }] },
+        { name: 'ACME', partnerStrengths: [] },
+        { name: 'Hooli', partnerStrengths: [{ name: 'Molly', strength: 1 }] },
       ]);
     });
 
@@ -162,7 +162,7 @@ describe('Network', () => {
       network.apply(contact('Jamie', 'Chris'));
 
       expect(network.listCompanies()).toEqual([
-        { name: 'Globex', partnerCounts: [{ name: 'Chris', count: 2 }] },
+        { name: 'Globex', partnerStrengths: [{ name: 'Chris', strength: 2 }] },
       ]);
     });
 
@@ -175,7 +175,28 @@ describe('Network', () => {
       network.apply(contact('laurie', 'chris'));
 
       expect(network.listCompanies()).toEqual([
-        { name: 'ACME', partnerCounts: [{ name: 'Chris', count: 1 }] },
+        { name: 'ACME', partnerStrengths: [{ name: 'Chris', strength: 1 }] },
+      ]);
+    });
+
+    it('adds each contact type by its weight (email 1, call 2, coffee 3, pitch 5)', () => {
+      network.apply(partner('Chris'));
+      network.apply(partner('Molly'));
+      network.apply(company('Globex'));
+      network.apply(employee('Laurie', 'Globex'));
+      network.apply(contact('Laurie', 'Chris', 'email'));
+      network.apply(contact('Laurie', 'Chris', 'call'));
+      network.apply(contact('Laurie', 'Chris', 'coffee'));
+      network.apply(contact('Laurie', 'Molly', 'pitch'));
+
+      expect(network.listCompanies()).toEqual([
+        {
+          name: 'Globex',
+          partnerStrengths: [
+            { name: 'Chris', strength: 6 },
+            { name: 'Molly', strength: 5 },
+          ],
+        },
       ]);
     });
 
@@ -185,7 +206,7 @@ describe('Network', () => {
       network.apply(contact('Laurie', 'Chris')); // Laurie not declared yet
       network.apply(employee('Laurie', 'Globex'));
 
-      expect(network.listCompanies()).toEqual([{ name: 'Globex', partnerCounts: [] }]);
+      expect(network.listCompanies()).toEqual([{ name: 'Globex', partnerStrengths: [] }]);
     });
 
     it('returns copies that cannot change the network', () => {
@@ -196,10 +217,10 @@ describe('Network', () => {
 
       const [globex] = network.listCompanies();
       globex!.name = 'Changed';
-      globex!.partnerCounts[0]!.count = 99;
+      globex!.partnerStrengths[0]!.strength = 99;
 
       expect(network.listCompanies()).toEqual([
-        { name: 'Globex', partnerCounts: [{ name: 'Chris', count: 1 }] },
+        { name: 'Globex', partnerStrengths: [{ name: 'Chris', strength: 1 }] },
       ]);
     });
   });
